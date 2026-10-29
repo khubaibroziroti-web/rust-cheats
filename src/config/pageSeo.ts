@@ -69,6 +69,11 @@ export const PAGE_SEO: Record<string, PageSeoEntry> = {
     description:
       'How the Rust cheats shop at getrustcheat.com uses analytics, cookies and contact data.',
   },
+  '/affiliate-disclosure/': {
+    title: 'Affiliate Disclosure | Rust Cheat Shop',
+    description:
+      'Learn how affiliate checkout links work on getrustcheat.com and how purchases may support this website.',
+  },
   '/about/': {
     title: 'About Rust Cheat | Buy PC Aimbot & ESP',
     description:

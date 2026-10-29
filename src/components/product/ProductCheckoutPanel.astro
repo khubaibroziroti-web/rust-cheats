@@ -24,6 +24,8 @@ const isSinglePlan = plans.length === 1;
   class="product-checkout text-left lg:sticky lg:top-24"
   aria-labelledby={`checkout-${product.slug}`}
   data-product-checkout
+  data-product-slug={product.slug}
+  data-selected-plan={defaultPlan.id}
   data-buy-url={product.buyUrl}
   data-plans={JSON.stringify(plans)}
 >
@@ -49,8 +51,15 @@ const isSinglePlan = plans.length === 1;
           plans.map((plan) => (
             <label class="flex cursor-pointer items-center justify-between gap-3 rounded-xl border border-border bg-background p-3.5 transition-colors has-data-checked:border-primary has-data-checked:bg-primary/10">
               <span class="flex min-w-0 items-center gap-3">
-                <RadioGroupItem value={plan.id} variant="primary" />
-                <span class="text-sm font-medium">{plan.label}</span>
+                <RadioGroupItem value={plan.id} variant="primary" aria-label={`${plan.label}, ${formatPlanPrice(plan.priceUsd)}`} />
+                <span class="flex min-w-0 flex-wrap items-center gap-2 text-sm font-medium">
+                  {plan.label}
+                  {plan.id === 'monthly' && !isSinglePlan && (
+                    <span class="rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
+                      Popular
+                    </span>
+                  )}
+                </span>
               </span>
               <span class="shrink-0 text-sm font-semibold tabular-nums text-foreground">
                 {formatPlanPrice(plan.priceUsd)}
@@ -77,10 +86,31 @@ const isSinglePlan = plans.length === 1;
         size="lg"
         class="w-full rounded-xl"
         data-checkout-buy
+        rel="sponsored noopener"
       >
-        Buy now
+        <span>Buy now — <span data-checkout-button-price>{formatPlanPrice(defaultPlan.priceUsd)}</span></span>
         <Icon name="arrowRight" size={17} />
       </Button>
+
+      <ul class="grid grid-cols-3 gap-2 text-center text-[11px] leading-tight text-muted-foreground" aria-label="Purchase benefits">
+        <li class="flex flex-col items-center gap-1.5">
+          <Icon name="zap" size={15} class="text-primary" />
+          <span>Instant access</span>
+        </li>
+        <li class="flex flex-col items-center gap-1.5">
+          <Icon name="refresh" size={15} class="text-primary" />
+          <span>Updates included</span>
+        </li>
+        <li class="flex flex-col items-center gap-1.5">
+          <Icon name="headphones" size={15} class="text-primary" />
+          <span>Setup support</span>
+        </li>
+      </ul>
+
+      <p class="text-xs leading-relaxed text-muted-foreground">
+        Partner checkout in USD. Review the <a class="font-medium text-foreground underline underline-offset-2 hover:text-primary" href="#product-requirements">requirements</a>
+        and <a class="font-medium text-foreground underline underline-offset-2 hover:text-primary" href="/affiliate-disclosure/">affiliate disclosure</a> before purchase.
+      </p>
     </div>
   </div>
 </aside>
@@ -106,8 +136,9 @@ const isSinglePlan = plans.length === 1;
       const group = root.querySelector('[data-sw-radio-group]');
       const totalEl = root.querySelector('[data-checkout-total]');
       const noteEl = root.querySelector('[data-checkout-note]');
+      const buttonPriceEl = root.querySelector('[data-checkout-button-price]');
       const buyBtn = root.querySelector<HTMLAnchorElement>('[data-checkout-buy]');
-      if (!group || !totalEl || !noteEl || !buyBtn) return;
+      if (!group || !totalEl || !noteEl || !buttonPriceEl || !buyBtn) return;
 
       const sync = () => {
         const planId = group.getAttribute('data-value') ?? plans[0]?.id;
@@ -116,6 +147,8 @@ const isSinglePlan = plans.length === 1;
 
         totalEl.textContent = `$${plan.priceUsd}`;
         noteEl.textContent = plan.priceNote;
+        buttonPriceEl.textContent = `$${plan.priceUsd}`;
+        root.setAttribute('data-selected-plan', plan.id);
         const separator = buyUrl.includes('?') ? '&' : '?';
         buyBtn.href = `${buyUrl}${separator}plan=${plan.id}`;
       };

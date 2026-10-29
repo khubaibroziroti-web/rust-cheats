@@ -4,12 +4,14 @@ import SectionHeader from '../SectionHeader.astro';
 import Icon from '../icons/Icon.astro';
 import { Button } from '@/components/starwind/button';
 import { Badge } from '@/components/starwind/badge';
+import { checkoutUrlWithPlan, formatPlanPrice, getProductPlans } from '../../data/productPricing';
 
 interface Props {
   product: ProductPage;
 }
 
 const { product } = Astro.props;
+const defaultPlan = getProductPlans(product.slug)[0]!;
 ---
 
 <section
@@ -47,8 +49,15 @@ const { product } = Astro.props;
         All modules
         <Icon name="chevronDown" size={16} />
       </Button>
-      <Button as="a" href={product.buyUrl} variant="primary" size="sm" class="rounded-full">
-        Buy now
+      <Button
+        as="a"
+        href={checkoutUrlWithPlan(product.buyUrl, defaultPlan.id)}
+        variant="primary"
+        size="sm"
+        class="rounded-full"
+        rel="sponsored noopener"
+      >
+        Buy now — {formatPlanPrice(defaultPlan.priceUsd)}
         <Icon name="arrowRight" size={16} />
       </Button>
     </div>

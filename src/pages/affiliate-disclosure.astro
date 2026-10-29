@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { resolvePageSeo } from '../config/seo';
+import LegalPage from '../components/LegalPage.astro';
+import { breadcrumbSchema, webPageSchema } from '../utils/schema';
+
+const pagePath = '/affiliate-disclosure/';
+const seo = resolvePageSeo(pagePath);
+const title = 'Affiliate Disclosure';
+const description =
+  'How affiliate checkout links work on getrustcheat.com and what to review before purchasing from a partner.';
+const sections = [
+  {
+    heading: 'Affiliate relationship',
+    paragraphs: [
+      'Some purchase buttons on getrustcheat.com lead to a third-party merchant. If you complete a qualifying purchase through one of these links, this website may receive a commission at no additional cost to you.',
+    ],
+  },
+  {
+    heading: 'Independent purchase decision',
+    paragraphs: [
+      'An affiliate relationship is not a guarantee of product availability, compatibility, safety, or results. Review the visible product details, current status, system requirements, risks, price, and merchant terms before buying.',
+    ],
+  },
+  {
+    heading: 'External checkout and support',
+    paragraphs: [
+      'Payments, license delivery, cancellations, and refund requests are handled under the checkout partner’s terms. getrustcheat.com does not ask you to enter card details directly on this website.',
+    ],
+  },
+  {
+    heading: 'Transparency',
+    paragraphs: [
+      'We identify partner checkout links where practical. If you have a question about a link or product information, contact support before completing the purchase.',
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  noindex={true}
+  jsonLd={[
+    webPageSchema({ name: title, description, url: pagePath }),
+    breadcrumbSchema([
+      { name: 'Home', path: '/' },
+      { name: title, path: pagePath },
+    ]),
+  ]}
+>
+  <LegalPage
+    title={title}
+    description={description}
+    breadcrumbLabel={title}
+    sections={sections}
+  />
+</BaseLayout>

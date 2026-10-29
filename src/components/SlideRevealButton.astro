@@ -12,7 +12,7 @@ interface Props {
 const { href, class: className, ariaLabel, icon = 'arrowRight' } = Astro.props;
 ---
 
-<a href={href} class:list={['slide-reveal-btn', className]} aria-label={ariaLabel}>
+<a href={href} class:list={['slide-reveal-btn', className]} aria-label={ariaLabel} rel="sponsored noopener">
   <span class="slide-reveal-btn__icon" aria-hidden="true">
     <Icon name={icon} size={18} class="slide-reveal-btn__svg" />
   </span>

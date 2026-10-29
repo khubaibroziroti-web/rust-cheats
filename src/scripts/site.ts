@@ -171,6 +171,32 @@ function initDeferredSections() {
   sections.forEach((section) => observer.observe(section));
 }
 
+function initCheckoutTracking() {
+  document.querySelectorAll<HTMLAnchorElement>('a[href*="levocheats.com/go/"]').forEach((link) => {
+    if (link.dataset.checkoutTrackingBound === 'true') return;
+    link.dataset.checkoutTrackingBound = 'true';
+
+    link.addEventListener('click', () => {
+      const panel = link.closest<HTMLElement>('[data-product-checkout]');
+      const trackedWindow = window as Window & { dataLayer?: Record<string, unknown>[] };
+      trackedWindow.dataLayer = trackedWindow.dataLayer ?? [];
+
+      let checkoutDestination = 'levocheats.com';
+      try {
+        checkoutDestination = new URL(link.href).hostname;
+      } catch {}
+
+      trackedWindow.dataLayer.push({
+        event: 'checkout_click',
+        product_slug: panel?.dataset.productSlug ?? 'rust',
+        plan_id: panel?.dataset.selectedPlan ?? 'default',
+        page_path: window.location.pathname,
+        checkout_destination: checkoutDestination,
+      });
+    });
+  });
+}
+
 function bootSite() {
   initDeferredSections();
   initFaqFilters();
@@ -180,6 +206,7 @@ function bootSite() {
   initThemeMetaColor();
   initThemeSwitches();
   initMobileNavigation();
+  initCheckoutTracking();
 }
 
 if (document.readyState === 'loading') {

@@ -5,6 +5,7 @@ import { pageTitle } from '../../../config/seo';
 import { getPageSeoEntry } from '../../../config/pageSeo';
 import { breadcrumbSchema, productSchema } from '../../../utils/schema';
 import ProductDetail from '../../../components/ProductDetail.astro';
+import { checkoutUrlWithPlan, getProductPlans } from '../../../data/productPricing';
 
 export function getStaticPaths() {
   return getAllProductSlugs().map((slug) => ({ params: { slug } }));
@@ -28,6 +29,11 @@ const breadcrumbs = [
   { name: 'Products', path: productHub.path },
   { name: product.title, path: pagePath },
 ];
+const productOffers = getProductPlans(product.slug).map((plan) => ({
+  url: checkoutUrlWithPlan(product.buyUrl, plan.id),
+  price: plan.priceUsd,
+  priceCurrency: 'USD',
+}));
 ---
 
 <BaseLayout
@@ -39,6 +45,7 @@ const breadcrumbs = [
       description: metaDescription,
       url: pagePath,
       offerUrl: product.buyUrl,
+      offers: productOffers,
       image: product.images[0]?.src,
       sku: product.slug,
     }),

@@ -31,7 +31,7 @@ const { overview, acquisition, buyUrl } = Astro.props;
       <CardTitle class="normal-case">{acquisition.title}</CardTitle>
     </CardHeader>
     <CardContent class="space-y-6">
-      <Button as="a" href={buyUrl} variant="primary" class="w-full">
+      <Button as="a" href={buyUrl} variant="primary" class="w-full" rel="sponsored noopener">
         Buy Now
         <Icon name="arrowRight" size={17} />
       </Button>

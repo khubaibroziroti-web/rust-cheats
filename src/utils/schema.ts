@@ -145,30 +145,55 @@ export function productSchema(input: {
   description: string;
   url: string;
   offerUrl: string;
+  offers?: { url: string; price: number; priceCurrency?: string }[];
   image?: string;
   sku?: string;
 }) {
+  const seller = {
+    '@type': 'Organization',
+    name: 'Rust Cheat',
+  };
+  const offers = input.offers?.length
+    ? input.offers.map((offer) => ({
+        '@type': 'Offer',
+        url: offerUrl(offer.url),
+        price: offer.price,
+        priceCurrency: offer.priceCurrency ?? 'USD',
+        availability: 'https://schema.org/InStock',
+        seller,
+      }))
+    : [
+        {
+          '@type': 'Offer',
+          url: offerUrl(input.offerUrl),
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          seller,
+        },
+      ];
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: input.name,
     description: input.description,
+    url: canonicalUrl(input.url),
     sku: input.sku ?? input.url.replace(/\//g, '-'),
     brand: {
       '@type': 'Brand',
       name: 'Rust Cheat',
     },
     ...(input.image ? { image: absoluteAssetUrl(input.image) } : {}),
-    offers: {
-      '@type': 'Offer',
-      url: offerUrl(input.offerUrl),
-      priceCurrency: 'USD',
-      availability: 'https://schema.org/InStock',
-      seller: {
-        '@type': 'Organization',
-        name: 'Rust Cheat',
-      },
-    },
+    offers: offers.length === 1
+      ? offers[0]
+      : {
+          '@type': 'AggregateOffer',
+          url: offerUrl(input.offerUrl),
+          lowPrice: Math.min(...offers.map((offer) => offer.price as number)),
+          highPrice: Math.max(...offers.map((offer) => offer.price as number)),
+          priceCurrency: 'USD',
+          offerCount: offers.length,
+        },
   };
 }
 

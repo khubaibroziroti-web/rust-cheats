@@ -222,6 +222,20 @@
   text-align: center;
 }
 
+/* Keep the long product page crawlable while deferring off-screen layout and paint work. */
+.product-detail > section:not(.product-detail-hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+.product-detail > #product-features {
+  contain-intrinsic-size: auto 2800px;
+}
+
+.product-detail > #product-experience {
+  contain-intrinsic-size: auto 1200px;
+}
+
 .product-detail .product-checkout {
   text-align: left;
 }
